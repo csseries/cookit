@@ -6,5 +6,6 @@ raw_data/
 *.csv
 **/__pycache__/
 .env
+api/__pycache__
 JustinSms*
 brokkoli.jpg
