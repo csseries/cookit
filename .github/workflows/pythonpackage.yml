@@ -9,12 +9,10 @@
 # - add a test stage to jobs
 
 
-name: Docker
+name: Deploy to Cloud Run
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
