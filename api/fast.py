@@ -27,6 +27,10 @@ def index():
 # response = requests.post('http://localhost:8000/predict', files=files)
 @app.post("/predict")
 async def predict(image: UploadFile = File(...)):
-    y_pred = predictor.predict(image.filename)
-    print(y_pred)
+
+    file_location = f"files/{image.filename}"
+    with open(file_location, "wb+") as file_object:
+        file_object.write(image.file.read())
+    y_pred = predictor.predict(file_location)
     return {"prediction": y_pred}
+    #return {"prediction": "Cucumber"}
