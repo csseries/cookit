@@ -4,6 +4,7 @@ import tensorflow_hub as hub
 
 import joblib
 from cookit.data import get_data
+from cookit.utils import OIv4_FOOD_CLASSES
 
 
 class Predictor():
@@ -24,16 +25,19 @@ class Predictor():
         img = tf.image.decode_jpeg(img, channels=3)
         return img
 
-    def predict(self, filename):
+    def predict(self, filename, threshold=0.25):
         print(f"Received file for prediction: {filename}")
         classes, scores = self.run_detector(filename)
         ingredients_raw = [i.decode('UTF-8') for i in classes]
 
         # sort out redundant labels but keep order
         ingredients = []
-        for i in ingredients_raw:
-            if i not in ingredients:
-                ingredients.append(i)
+        for i, label in enumerate(ingredients_raw):
+            # add only ingredients which have higher score than threshold
+            if scores[i] > threshold:
+                # add only ingredients which are food-related
+                if label not in ingredients and label in OIv4_FOOD_CLASSES:
+                    ingredients.append(label)
         return ingredients
         #return ['Cucumber, Carrot, Garlic, Butter, Toast']
 
