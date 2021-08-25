@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 import pandas as pd
-from fastapi import FastAPI, File, UploadFile
+from termcolor import colored
+from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 
 from cookit.predict import Predictor
@@ -28,7 +29,10 @@ def index():
 # files = {'image': open('path/to/file/IMG_20150713_195216.jpg', 'rb')}
 # response = requests.post('http://localhost:8000/predict', files=files)
 @app.post("/predict")
-async def predict(image: UploadFile = File(...)):
+async def predict(image: UploadFile = File(...), threshold: float = Form(...)):
+
+    print(colored(f"API received image {image.filename} with threshold {threshold}", 'magenta'))
+
     # create folder if not exists for uploaded images
     Path("./files").mkdir(parents=True, exist_ok=True)
     file_location = f"./files/{image.filename}"
@@ -36,7 +40,7 @@ async def predict(image: UploadFile = File(...)):
         file_object.write(image.file.read())
 
     # predict ingredients
-    y_pred = predictor.predict(file_location)
+    y_pred = predictor.predict(file_location, float(threshold))
 
     # delete uploaded file after prediction
     try:
