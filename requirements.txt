@@ -8,6 +8,8 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
+tensorflow
+tensorflow_hub
 
 # tests/linter
 black
