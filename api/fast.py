@@ -27,20 +27,32 @@ def index():
 
 # this expects a POST call like that:
 # files = {'image': open('path/to/file/IMG_20150713_195216.jpg', 'rb')}
-# response = requests.post('http://localhost:8000/predict', files=files)
+# payload = {'threshold': 0.1}
+# response = requests.post('http://localhost:8000/predict', files=files, data=payload)
+# --> make sure to close the opened file again or del the files dictionary in this example case!
 @app.post("/predict")
-async def predict(image: UploadFile = File(...), threshold: float = Form(...)):
+async def predict(image: UploadFile = File(...), threshold: float = Form(0.25)):
+    """ Executes prediction based on sent file and threshold
+        image: a file in multipart/form-data format
+        threshold: a float value (default: 0.25) to filter predicted classes
+        probability in form-data
+
+        Returns List of Strings containung predicted ingredients
+    """
 
     print(colored(f"API received image {image.filename} with threshold {threshold}", 'magenta'))
 
     # create folder if not exists for uploaded images
     Path("./files").mkdir(parents=True, exist_ok=True)
     file_location = f"./files/{image.filename}"
+
+    # wait until file is completely loaded and store it on disk
     with open(file_location, "wb+") as file_object:
-        file_object.write(image.file.read())
+        file_object.write(image.file.read()) # this awaits the read()
+        print(colored(f"File stored under {file_location}", 'magenta'))
 
     # predict ingredients
-    y_pred = predictor.predict(file_location, float(threshold))
+    y_pred = predictor.predict(file_location, threshold)
 
     # delete uploaded file after prediction
     try:
