@@ -1,19 +1,17 @@
-
-
 OIv4_FOOD_CLASSES = [
-    'Apple', 'Beer', 'Chopsticks', 'Croissant', 'Cucumber', 'Radish', 'Towel',
-    'Hot dog', 'Fast food', 'Waffle', 'Pancake', 'Pretzel', 'Bagel', 'Popcorn',
-    'Burrito', 'Cheese', 'Muffin', 'Juice', 'Cookie', 'Dessert', 'Zucchini',
-    'Dairy', 'Winter melon', 'Guacamole', 'Coffee', 'Whisk', 'Food',
-    'Salt and pepper shakers', 'Fruit', 'French fries', 'Tart', 'Egg', 'Grape',
-    'Food processor', 'Artichoke', 'Mammal', 'Milk', 'Baked goods', 'Mushroom',
-    'Plant', 'Potato', 'Pasta', 'Pumpkin', 'Pear', 'Pizza', 'Seafood',
-    'Submarine sandwich', 'Sushi', 'Tea', 'Taco', 'Strawberry', 'Tomato',
-    'Wine', 'Cream', 'Bread', 'Chicken', 'Duck', 'Lemon', 'Banana',
-    'Hamburger', 'Maple', 'Fish', 'Lobster', 'Asparagus', 'Oyster',
-    'Ice cream', 'Orange', 'Jellyfish', 'Goose', 'Peach', 'Coconut',
-    'Vegetable', 'Snail', 'Shellfish', 'Cabbage', 'Carrot', 'Mango',
-    'Pineapple', 'Cake', 'Honeycomb', 'Candy', 'Salad', 'Broccoli', 'Pastry',
-    'Grapefruit', 'Bell pepper', 'Turkey', 'Pomegranate', 'Doughnut',
-    'Watermelon', 'Cantaloupe', 'Sandwich', 'Shrimp', 'Crab'
+    'Apple', 'Artichoke', 'Asparagus', 'Bagel', 'Baked goods', 'Banana',
+    'Beer', 'Bell pepper', 'Bread', 'Broccoli', 'Burrito', 'Cabbage', 'Cake',
+    'Candy', 'Cantaloupe', 'Carrot', 'Cheese', 'Chicken', 'Chopsticks',
+    'Coconut', 'Coffee', 'Cookie', 'Crab', 'Cream', 'Croissant', 'Cucumber',
+    'Dairy', 'Dessert', 'Doughnut', 'Duck', 'Egg', 'Fast food', 'Fish', 'Food',
+    'Food processor', 'French fries', 'Fruit', 'Goose', 'Grape', 'Grapefruit',
+    'Guacamole', 'Hamburger', 'Honeycomb', 'Hot dog', 'Ice cream', 'Jellyfish',
+    'Juice', 'Lemon', 'Lobster', 'Mammal', 'Mango', 'Maple', 'Milk', 'Muffin',
+    'Mushroom', 'Orange', 'Oyster', 'Pancake', 'Pasta', 'Pastry', 'Peach',
+    'Pear', 'Pineapple', 'Pizza', 'Plant', 'Pomegranate', 'Popcorn', 'Potato',
+    'Pretzel', 'Pumpkin', 'Radish', 'Salad', 'Salt and pepper shakers',
+    'Sandwich', 'Seafood', 'Shellfish', 'Shrimp', 'Snail', 'Strawberry',
+    'Submarine sandwich', 'Sushi', 'Taco', 'Tart', 'Tea', 'Tomato', 'Towel',
+    'Turkey', 'Vegetable', 'Waffle', 'Watermelon', 'Whisk', 'Wine',
+    'Winter melon', 'Zucchini'
 ]
