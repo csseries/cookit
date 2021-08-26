@@ -37,7 +37,7 @@ async def predict(image: UploadFile = File(...), threshold: float = Form(0.25)):
         threshold: a float value (default: 0.25) to filter predicted classes
         probability in form-data
 
-        Returns List of Strings containung predicted ingredients
+        Returns JSON containing predicted ingredients, their max. scores & bboxes
     """
 
     print(colored(f"API received image {image.filename} with threshold {threshold}", 'magenta'))
@@ -52,7 +52,7 @@ async def predict(image: UploadFile = File(...), threshold: float = Form(0.25)):
         print(colored(f"File stored under {file_location}", 'magenta'))
 
     # predict ingredients
-    y_pred = predictor.predict(file_location, threshold)
+    y_pred, scores, bboxes = predictor.predict(file_location, threshold)
 
     # delete uploaded file after prediction
     try:
@@ -60,4 +60,6 @@ async def predict(image: UploadFile = File(...), threshold: float = Form(0.25)):
     except OSError as e:  ## if failed, report it back to logs
         print("Error: %s - %s." % (e.filename, e.strerror))
 
-    return {"prediction": y_pred}
+    return {"prediction": y_pred,
+            "scores": scores,
+            "bboxes": bboxes}

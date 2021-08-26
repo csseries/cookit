@@ -35,19 +35,23 @@ class Predictor():
     def predict(self, filename, threshold=0.25):
         filename = self.resize_images(filename)
         print(f"Received file for prediction: {filename}")
-        classes, scores = self.run_detector(filename)
+        classes, scores, bboxes = self.run_detector(filename)
         ingredients_raw = [i.decode('UTF-8') for i in classes]
 
         # sort out redundant labels but keep order
         ingredients = []
+        filtered_scores = []
+        filtered_bboxes = []
         for i, label in enumerate(ingredients_raw):
             # add only ingredients which have higher score than threshold
             if scores[i] > threshold:
                 # add only ingredients which are food-related
                 if label not in ingredients and label in OIv4_FOOD_CLASSES:
                     ingredients.append(label)
-        return ingredients
-        #return ['Cucumber, Carrot, Garlic, Butter, Toast']
+                    # should still return the highest scores since the original lists are descending ordered
+                    filtered_scores.append(float(scores[i]))
+                    filtered_bboxes.append(bboxes[i].tolist())
+        return (ingredients, filtered_scores, filtered_bboxes)
 
     def run_detector(self, path):
         img = self.load_img(path)
@@ -58,7 +62,9 @@ class Predictor():
         result = self.model(converted_img)
 
         result = {key: value.numpy() for key, value in result.items()}
-        return (result["detection_class_entities"], result["detection_scores"])
+        return (result["detection_class_entities"],
+                result["detection_scores"],
+                result["detection_boxes"])
 
 
 if __name__ == '__main__':
