@@ -59,4 +59,4 @@ pypi:
 # ----------------------------------
 
 run_locally:
-	@uvicorn api.fast:app --host 0.0.0.0
+	@uvicorn api.fast:app --reload --host 0.0.0.0
