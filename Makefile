@@ -53,3 +53,10 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
+
+# ----------------------------------
+#      LOCAL RUNNING
+# ----------------------------------
+
+run_locally:
+	@uvicorn api.fast:app --reload --host 0.0.0.0
