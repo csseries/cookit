@@ -5,6 +5,7 @@
 raw_data/
 !raw_data/test_pic.jpg
 *.csv
+!tests/food_testing_set.csv
 **/__pycache__/
 .env
 api/__pycache__
