@@ -17,6 +17,7 @@ coverage
 flake8
 pytest
 yapf
+csv
 
 # API
 gcsfs
