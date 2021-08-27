@@ -28,11 +28,3 @@ def testing_run_detector_return_bytes():
 
 def testing_run_detector_return_numpyfloat32():
     assert type(predictor.run_detector("raw_data/test_pic.jpg")[1][0]) == numpy.float32
-
-
-testing_load_img_shape()
-testing_predict_return_list()
-testing_predict_return_str()
-testing_run_detector_return_tuple()
-testing_run_detector_return_bytes()
-testing_run_detector_return_numpyfloat32()
