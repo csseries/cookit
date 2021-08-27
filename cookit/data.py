@@ -7,8 +7,8 @@ def get_data():
 
 
 
-
-def convert_io_metadta(labelfile_path, baseurl='gs://somewhere/', csv_path='tf_training.csv'):
+# Should we perhaps keep non-food-related labels in the test set?
+def convert_io_metadta(labelfile_path, baseurl='gs://somewhere', csv_path='tf_training.csv'):
     """ Converts a json file in format fiftyone.types.FiftyOneImageDetectionDataset
         to a format as it is expected by the tflite_model_maker.object_detector
 
@@ -29,7 +29,7 @@ def convert_io_metadta(labelfile_path, baseurl='gs://somewhere/', csv_path='tf_t
                 label = classes[label_items['label']]
                 if label in OIv4_FOOD_CLASSES or label in TEST_FOOD_CLASSES:
                     bb = label_items['bounding_box']
-                    line = ['TRAINING', f"{baseurl}/{uuid}.jpg", label, bb[0], bb[1], "", "", bb[2], bb[3]]
+                    line = ['TRAINING', f"{baseurl}/{uuid}.jpg", label, bb[0], bb[1], "", "", bb[2], bb[3], "", ""]
                     writer.writerow(line)
 
 if __name__ == '__main__':
