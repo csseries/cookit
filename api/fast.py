@@ -1,4 +1,5 @@
 import os
+from uuid import uuid1
 from pathlib import Path
 import pandas as pd
 from termcolor import colored
@@ -39,12 +40,12 @@ async def predict(image: UploadFile = File(...), threshold: float = Form(0.25)):
 
         Returns JSON containing predicted ingredients, their max. scores & bboxes
     """
-
-    print(colored(f"API received image {image.filename} with threshold {threshold}", 'magenta'))
+    filename = str(uuid1()) + '.jpg'
+    print(colored(f"API received image {filename} with threshold {threshold}", 'magenta'))
 
     # create folder if not exists for uploaded images
     Path("./files").mkdir(parents=True, exist_ok=True)
-    file_location = f"./files/{image.filename}"
+    file_location = f"./files/{filename}"
 
     # wait until file is completely loaded and store it on disk
     with open(file_location, "wb+") as file_object:
