@@ -27,10 +27,8 @@ class Predictor():
     def resize_images(self, path, max_width=512, max_height=512):
         pil_image = Image.open(path)
         if pil_image.width > max_width or pil_image.height > max_height:
-            #pil_image = ImageOps.fit(pil_image, (new_width, new_height), Image.ANTIALIAS)
-            #pil_image_rgb = pil_image.convert("RGB")
             pil_image.thumbnail((max_width, max_height), Image.ANTIALIAS)
-            pil_image.save(path, format="JPEG", quality=90)
+            pil_image.save(path, format=pil_image.format, quality=90)
         return path
 
     def predict(self, filename, threshold=0.25):
