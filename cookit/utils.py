@@ -17,3 +17,24 @@ OIv4_FOOD_CLASSES = [
     'Turkey', 'Vegetable', 'Waffle', 'Watermelon', 'Whisk', 'Wine',
     'Winter melon', 'Zucchini'
 ]
+
+TEST_FOOD_CLASSES = [
+    'Apple', 'Apricot', 'Artichoke', 'Asparagus', 'Aubergine', 'Avocado',
+    'Banana', 'Basil', 'Basilicum', 'Bean', 'Beans', 'Beet', 'Beetroot',
+    'Bell pepper', 'Bread', 'Broccoli', 'Brussel sprout', 'Brussels sprout',
+    'Brussels sprouts', 'Butternut', 'Cabbage', 'Capsicum', 'Carrot',
+    'Cauliflower', 'Celery', 'Cheese', 'Chickpea', 'Chili', 'Chilli', 'Chive',
+    'Coconut milk', 'Coriander', 'Corn', 'Cream', 'Cucumber', 'Date',
+    'Dragon fruit', 'Dried bean', 'Dried fruit', 'Egg', 'Emmental', 'Endive',
+    'Fenel', 'Fennel', 'Fetta', 'Fig', 'Fish', 'Flour', 'Garlic', 'Ginger',
+    'Grained cheese', 'Grape', 'Great beans', 'Green bean', 'Green beans',
+    'Juice', 'Kaki', 'Kiwi', 'Leek', 'Lemon', 'Lentil', 'Lettuce', 'Litchi',
+    'Mango', 'Meat', 'Melon', 'Milk', 'Mozzarella', 'Mushroom', 'Nut', 'Oat',
+    'Oil', 'Olive', 'Olive oil', 'Onion', 'Orange', 'Papaya', 'Paprika',
+    'Parmesan', 'Parsley', 'Pasta', 'Peanut', 'Peanut butter', 'Pear', 'Peas',
+    'Pepper', 'Persley', 'Pineapple', 'Plum', 'Potato', 'Potatoe', 'Radish',
+    'Rice', 'Romanesco', 'Runner bean', 'Salad', 'Salmon', 'Salt', 'Soya',
+    'Spinach', 'Spring onion', 'Strawberry', 'Sunflower seeds',
+    'Sweet potatoe', 'Tangerine', 'Tomato', 'Tomatoe', 'Tuna', 'Turmeric',
+    'Turnip', 'Water', 'Water melon', 'Zucchini'
+]
