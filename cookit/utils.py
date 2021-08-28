@@ -1,5 +1,3 @@
-
-
 OIv4_FOOD_CLASSES = [
     'Apple', 'Artichoke', 'Asparagus', 'Bagel', 'Baked goods', 'Banana',
     'Beer', 'Bell pepper', 'Bread', 'Broccoli', 'Burrito', 'Cabbage', 'Cake',
@@ -16,6 +14,23 @@ OIv4_FOOD_CLASSES = [
     'Submarine sandwich', 'Sushi', 'Taco', 'Tart', 'Tea', 'Tomato',
     'Turkey', 'Vegetable', 'Waffle', 'Watermelon', 'Whisk', 'Wine',
     'Winter melon', 'Zucchini'
+]
+
+OIv4_INGREDIENTS_ONLY = [
+    'Apple', 'Artichoke', 'Asparagus', 'Banana',
+    'Beer', 'Bell pepper', 'Bread', 'Broccoli', 'Burrito', 'Cabbage',
+    'Cantaloupe', 'Carrot', 'Cheese', 'Chicken', 'Coconut',
+    'Crab', 'Cream', 'Croissant', 'Cucumber', 'Dairy',
+    'Duck', 'Egg', 'Fish', 'French fries',
+    'Grape', 'Grapefruit', 'Guacamole', 'Hamburger',
+    'Honeycomb', 'Ice cream', 'Jellyfish', 'Juice', 'Lemon',
+    'Lobster', 'Mango', 'Maple', 'Milk', 'Muffin', 'Mushroom',
+    'Orange', 'Oyster', 'Pancake', 'Pasta', 'Pastry', 'Peach', 'Pear',
+    'Pineapple', 'Pizza', 'Pomegranate', 'Popcorn', 'Potato',
+    'Pretzel', 'Pumpkin', 'Radish', 'Salad',
+    'Sandwich', 'Seafood', 'Shellfish', 'Shrimp', 'Strawberry',
+    'Submarine sandwich', 'Sushi', 'Taco', 'Tea', 'Tomato', 'Turkey',
+    'Waffle', 'Watermelon','Wine', 'Winter melon', 'Zucchini'
 ]
 
 TEST_FOOD_CLASSES = [
