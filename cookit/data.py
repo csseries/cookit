@@ -56,7 +56,8 @@ def convert_io_metadta(labelfile_path, baseurl='gs://somewhere', csv_path='tf_tr
                     elif uuid_count >= int(test_count + val_count):
                         split = "TRAINING"
                         train_bboxes += 1
-                    line = [split, f"{baseurl}/{uuid}.jpg", label, bb[0], bb[1], "", "", bb[2], bb[3], "", ""]
+                    line = [split, f"{baseurl}/{uuid}.jpg", label, bb[0], bb[1], "", "",
+                            min(bb[0] + bb[2], 1.0), min(bb[1] + bb[3], 1.0), "", ""] # min() should actually not be neccesarry, but never say never....
                     writer.writerow(line)
 
     unique_food_classes = list(sorted(set(food_classes)))
