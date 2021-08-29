@@ -66,13 +66,12 @@ class Predictor():
 
         results = []
         for i in range(count):
-            if scores[i] >= threshold:
-              result = {
+            result = {
                 'bounding_box': boxes[i],
-                'class_id': classes[i],
+                'class_id': int(classes[i]),
                 'score': scores[i]
-              }
-              results.append(result)
+            }
+            results.append(result)
         return results
 
     def run_detection(self, image_path, threshold=0.5):
@@ -91,23 +90,16 @@ class Predictor():
         detection_result_image = self.run_detection(image_path, threshold)
         print(f"Received file for prediction: {image_path}")
 
-        # sort out redundant labels but keep order
         ingredients = []
         filtered_scores = []
         filtered_bboxes = []
-        res_map = {}
 
-        for i in range(len(classes)):
-            res_map[i] = classes[i]
-
-        for item in detection_result_image:
-            result = {key: value for key, value in item.items()}
-            # add only ingredients which have higher score than threshold
-            if float(result['score']) > threshold:
-                # add only ingredients which are food-related
-                if str(res_map[result['class_id']]) not in ingredients and res_map[result['class_id']] in OIv4_FOOD_CLASSES:
-                    res = str(res_map[result['class_id']])
-                    ingredients.append(res)
+        for result in detection_result_image:
+            if result['score'] > threshold:
+                res_class = self.classes[result['class_id']]
+                # do not return redundant ingredients
+                if res_class not in ingredients:
+                    ingredients.append(res_class)
                     # should still return the highest scores since the original lists are descending ordered
                     filtered_scores.append(float(result['score']))
                     filtered_bboxes.append(result['bounding_box'].tolist())
