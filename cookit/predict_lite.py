@@ -6,6 +6,7 @@ from cookit.data import get_data
 from PIL import Image
 from cookit.utils import OIv4_FOOD_CLASSES
 
+# Make tensorflow less verbose
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
@@ -23,8 +24,10 @@ class Predictor():
         # for label_id, label_name in label_map.as_dict().items():
         #   classes[label_id-1] = label_name
         self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
+
     def _get_model(self, model_path='model.tflite'):
-        interpreter = tf.lite.Interpreter(model_path="model.tflite")
+        """ Load the model from a local path """
+        interpreter = tf.lite.Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
         return interpreter
 
@@ -37,29 +40,29 @@ class Predictor():
         resized_img = resized_img[tf.newaxis, :]
         return resized_img
 
-    def set_input_tensor(self, interpreter, image):
+    def set_input_tensor(self, image):
         """Set the input tensor."""
-        tensor_index = interpreter.self.get_input_details()[0]['index']
-        input_tensor = interpreter.tensor(tensor_index)()[0]
+        tensor_index = self.model.get_input_details()[0]['index']
+        input_tensor = self.model.tensor(tensor_index)()[0]
         input_tensor[:, :] = image
 
-    def get_output_tensor(self, interpreter, index):
+    def get_output_tensor(self, index):
         """Retur the output tensor at the given index."""
-        output_details = interpreter.self.get_output_details()[index]
-        tensor = np.squeeze(interpreter.get_tensor(output_details['index']))
+        output_details = self.model.get_output_details()[index]
+        tensor = np.squeeze(self.model.get_tensor(output_details['index']))
         return tensor
 
-    def detect_objects(self, interpreter, image, threshold):
+    def detect_objects(self, image):
         """Returns a list of detection results, each a dictionary of object info."""
         # Feed the input image to the model
-        self.set_input_tensor(interpreter, image)
-        interpreter.invoke()
+        self.set_input_tensor(image)
+        self.model.invoke()
 
         # Get all outputs from the model
-        boxes = self.get_output_tensor(interpreter, 0)
-        classes = self.get_output_tensor(interpreter, 1)
-        scores = self.get_output_tensor(interpreter, 2)
-        count = int(self.get_output_tensor(interpreter, 3))
+        boxes = self.get_output_tensor(0)
+        classes = self.get_output_tensor(1)
+        scores = self.get_output_tensor(2)
+        count = int(self.get_output_tensor(3))
 
         results = []
         for i in range(count):
@@ -72,10 +75,10 @@ class Predictor():
               results.append(result)
         return results
 
-    def run_odt_and_draw_results(self, image_path, interpreter, threshold=0.5):
+    def run_detection(self, image_path, threshold=0.5):
         """Run object detection on the input image and draw the detection results"""
         # Load the input shape required by the model
-        _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
+        _, input_height, input_width, _ = self.model.get_input_details()[0]['shape']
 
         # Load the input image and preprocess it
         preprocessed_image = self.preprocess_image(image_path, (input_height, input_width))
@@ -84,9 +87,8 @@ class Predictor():
         results = self.detect_objects(preprocessed_image)
         return results
 
-    def predict(self, image_path, threshold=0.25):
-        interpreter = self._get_model()
-        detection_result_image = self.run_odt_and_draw_results(image_path, interpreter, threshold)
+    def predict(self, image_path, threshold=0.5):
+        detection_result_image = self.run_detection(image_path, threshold)
         print(f"Received file for prediction: {image_path}")
 
         # sort out redundant labels but keep order
