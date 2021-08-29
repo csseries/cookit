@@ -10,6 +10,8 @@ pandas
 scikit-learn
 tensorflow
 tensorflow_hub
+os
+cv2
 
 # tests/linter
 black
