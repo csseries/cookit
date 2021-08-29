@@ -39,20 +39,20 @@ class Predictor():
         resized_img = tf.image.resize(img, input_size)
         resized_img = resized_img[tf.newaxis, :]
         return resized_img, original_image
-    
+
     def set_input_tensor(self, interpreter, image):
         """Set the input tensor."""
         tensor_index = interpreter.self.get_input_details()[0]['index']
         input_tensor = interpreter.tensor(tensor_index)()[0]
         input_tensor[:, :] = image
-    
+
     def get_output_tensor(self, interpreter, index):
         """Retur the output tensor at the given index."""
         output_details = interpreter.self.get_output_details()[index]
         tensor = np.squeeze(interpreter.get_tensor(output_details['index']))
         return tensor
-    
-    def detect_objects(interpreter, image, threshold):
+
+    def detect_objects(self, interpreter, image, threshold):
         """Returns a list of detection results, each a dictionary of object info."""
         # Feed the input image to the model
         self.set_input_tensor(interpreter, image)
@@ -75,7 +75,7 @@ class Predictor():
               results.append(result)
         return results
 
-    def run_odt_and_draw_results(image_path, interpreter, threshold=0.5):
+    def run_odt_and_draw_results(self, image_path, interpreter, threshold=0.5):
         """Run object detection on the input image and draw the detection results"""
         # Load the input shape required by the model
         _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
@@ -116,7 +116,7 @@ class Predictor():
         original_uint8 = original_image_np.astype(np.uint8)
         return results
 
-    def predict(image_path, threshold=0.5):
+    def predict(self, image_path, threshold=0.25):
         interpreter = self._get_model()
         detection_result_image = self.run_odt_and_draw_results(image_path, interpreter, threshold)
         print(f"Received file for prediction: {image_path}")
