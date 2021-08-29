@@ -1,16 +1,36 @@
 import csv
 import json
 import math
-from cookit.utils import OIv4_FOOD_CLASSES, OIv4_INGREDIENTS_ONLY, TEST_FOOD_CLASSES
+import pandas as pd
+from google.cloud import storage
+from cookit.utils import OIv4_INGREDIENTS_ONLY, TEST_FOOD_CLASSES
+from cookit.params import BUCKET_NAME
 
-def get_data():
-    pass
 
+
+def download_file_from_bucket(path='labels.json'):
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(path)
+    blob.download_to_filename(path)
+
+
+def upload_file_to_bucket(path):
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(path)
+    blob.upload_from_filename(path)
+
+
+def get_oi_dataset_df(path='oi_food.csv', nrows=1000):
+    """method to get the training data (or a portion of it) from google cloud bucket"""
+    df = pd.read_csv(f"gs://{BUCKET_NAME}/{path}", nrows=nrows)
+    return df
 
 
 # Should we perhaps keep non-food-related labels in the test set?
-def convert_io_metadta(labelfile_path, baseurl='gs://somewhere', csv_path='tf_training.csv',
-                       test_split=0.2, val_split=0.1):
+def convert_oi_metadata(labelfile_path, baseurl='gs://somewhere', csv_path='tf_training.csv',
+                        test_split=0.2, val_split=0.1):
     """ Converts a json file in format fiftyone.types.FiftyOneImageDetectionDataset
         to a format as it is expected by the tflite_model_maker.object_detector
 
@@ -74,5 +94,24 @@ def convert_io_metadta(labelfile_path, baseurl='gs://somewhere', csv_path='tf_tr
         'images_count': total_images
     }
 
+
+def get_random_slice(csv_path, out_csv_path, size, return_df=True):
+    df = pd.read_csv(csv_path)
+    sample = df.sample(size)
+    sample.to_csv(out_csv_path, index=False)
+    if return_df:
+        return sample
+
+
+def create_dataset(json_path='labels.json', csv_path='oi_food.csv'):
+    download_file_from_bucket(json_path)
+    ds = convert_oi_metadata(json_path, csv_path=csv_path)
+    upload_file_to_bucket(csv_path)
+    print(f"Uploaded new dataset to gs://{BUCKET_NAME}/{csv_path}")
+
+
 if __name__ == '__main__':
-    print("Nothing to do here...")
+    create_dataset()
+    print("Print 5 random samples")
+    print(get_oi_dataset_df('oi_food.csv', 5))
+    #sample = get_random_slice('oi_food.csv', 'labels_slice.csv', 1000)
