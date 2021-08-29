@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
-import pandas as pd
 import cv2
+import os
 
 from cookit.data import get_data
 from PIL import Image
