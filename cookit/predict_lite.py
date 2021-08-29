@@ -17,6 +17,13 @@ class Predictor():
         """
         self.model = self._get_model()
 
+        # NOTE: The order of this list hardcoded here, and needs to be changed when re-training the model!
+        # When exporting the model in tflite format, the model_spec is lost, so we cannot do it like that:
+        # classes = ['???'] * model.model_spec.config.num_classes
+        # label_map = model.model_spec.config.label_map
+        # for label_id, label_name in label_map.as_dict().items():
+        #   classes[label_id-1] = label_name
+        self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
     def _get_model(self, model_path='model.tflite'):
         interpreter = tf.lite.Interpreter(model_path="model.tflite")
         interpreter.allocate_tensors()
