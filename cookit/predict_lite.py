@@ -34,10 +34,9 @@ class Predictor():
         img = tf.io.read_file(image_path)
         img = tf.io.decode_image(img, channels=3)
         img = tf.image.convert_image_dtype(img, tf.uint8)
-        original_image = img
         resized_img = tf.image.resize(img, input_size)
         resized_img = resized_img[tf.newaxis, :]
-        return resized_img, original_image
+        return resized_img
 
     def set_input_tensor(self, interpreter, image):
         """Set the input tensor."""
@@ -80,39 +79,10 @@ class Predictor():
         _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
 
         # Load the input image and preprocess it
-        preprocessed_image, original_image = self.preprocess_image(
-            image_path,
-            (input_height, input_width)
-        )
+        preprocessed_image = self.preprocess_image(image_path, (input_height, input_width))
 
         # Run object detection on the input image
-        results = self.detect_objects(interpreter, preprocessed_image, threshold=threshold)
-
-        # Plot the detection results on the input image
-        original_image_np = original_image.numpy().astype(np.uint8)
-        for obj in results:
-            # Convert the object bounding box from relative coordinates to absolute
-            # coordinates based on the original image resolution
-            ymin, xmin, ymax, xmax = obj['bounding_box']
-            xmin = int(xmin * original_image_np.shape[1])
-            xmax = int(xmax * original_image_np.shape[1])
-            ymin = int(ymin * original_image_np.shape[0])
-            ymax = int(ymax * original_image_np.shape[0])
-
-            # Find the class index of the current object
-            class_id = int(obj['class_id'])
-
-            # Draw the bounding box and label on the image
-            color = [int(c) for c in COLORS[class_id]]
-            cv2.rectangle(original_image_np, (xmin, ymin), (xmax, ymax), color, 2)
-            # Make adjustments to make the label visible for all objects
-            y = ymin - 15 if ymin - 15 > 15 else ymin + 15
-            label = "{}: {:.0f}%".format(classes[class_id], obj['score'] * 100)
-            cv2.putText(original_image_np, label, (xmin, y),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-
-        # Return the final image
-        original_uint8 = original_image_np.astype(np.uint8)
+        results = self.detect_objects(preprocessed_image)
         return results
 
     def predict(self, image_path, threshold=0.25):
