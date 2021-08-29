@@ -30,4 +30,3 @@ six>=1.14
 joblib
 termcolor
 Pillow
-opencv-python
