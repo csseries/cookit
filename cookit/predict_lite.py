@@ -29,15 +29,8 @@ class Predictor():
         interpreter.allocate_tensors()
         return interpreter
 
-    def image_prep(self, image_path):
-        im = Image.open(image_path)
-        im.thumbnail((512, 512), Image.ANTIALIAS)
-        im.save(image_path, 'PNG')
-        return image_path
-
     def preprocess_image(self, image_path, input_size):
         """Preprocess the input image to feed to the TFLite model"""
-        image_path = self.image_prep(image_path)
         img = tf.io.read_file(image_path)
         img = tf.io.decode_image(img, channels=3)
         img = tf.image.convert_image_dtype(img, tf.uint8)
