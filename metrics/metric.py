@@ -16,7 +16,7 @@ def retrieve_info_from_csv():
 
     counter = 0
 
-    with open('food_testing_set.csv') as csvfile:
+    with open('/home/justin/code/JustinSms/cookit/cookit/metrics/food_testing_set.csv') as csvfile:
         read = csv.reader(csvfile, delimiter=";")
         for row in read:
             csv_list.append(row)
@@ -47,11 +47,6 @@ def download_test_images(ingredients_dict):
             writer.write(image)
 
     counter += 1
-
-
-def make_test_prediction():
-    pred = predictor.predict("/home/justin/code/JustinSms/cookit/cookit/metrics/images_from_csv/0.jpg")
-    print(pred)
 
 
 def making_prediction():
@@ -88,7 +83,53 @@ def making_prediction():
     return prediction_dict
 
 
+def calculating_score():
+    ingredients_dict = retrieve_info_from_csv()
+    prediction_dict = making_prediction()
+
+    counter = 0
+    volumne_counter = 0
+    correct_counter = 0
+    false_predict_counter = 0
+    volumne_pred_counter = 0
+
+    while counter <= 65:
+        #print(counter, "counter")
+
+        for items in ingredients_dict[f"{counter}"][0]:
+            #print(items, "items")
+            number_words = items.count(",") + 1
+
+            volumne_counter += number_words
+            #print(volumne_counter, "volumne counter")
+
+            for pred in prediction_dict[f"{counter}"]:
+                pred = pred.lower()
+                volumne_pred_counter += 1
+                #print(pred, "pred")
+
+                if pred in items:
+                    #print(pred, "pred_in_counter")
+                    correct_counter += 1
+                else:
+                    #print(pred, "pred_fals_predict")
+                    false_predict_counter += 1
+
+        counter += 1
+
+    print(correct_counter, "correct_counter")
+    print(volumne_counter, "csv volumne_counter")
+    print(volumne_pred_counter, "volumne_pred_counter")
+    print(false_predict_counter, "false_predict_counter")
+
+    accuracy = round(correct_counter / volumne_counter, 2)
+    print(accuracy, "accuracy")
+
+    perc_false_predictions = round(false_predict_counter / volumne_pred_counter, 2)
+    print(perc_false_predictions, "percentage of false predictions")
+
+
 #retrieve_info_from_csv()
-#download_test_images(link_list)
-#make_test_prediction()
-making_prediction()
+#download_test_images()
+#making_prediction()
+calculating_score()
