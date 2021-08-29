@@ -16,14 +16,13 @@ class Predictor():
         A basic call for predictions.
         """
         self.model = self._get_model()
-    
+
     def _get_model(self, model_path='model.tflite'):
         interpreter = tf.lite.Interpreter(model_path="model.tflite")
         interpreter.allocate_tensors()
         return interpreter
 
     def image_prep(self, image_path):
-        !wget -q -O $image_path #$image_url
         im = Image.open(image_path)
         im.thumbnail((512, 512), Image.ANTIALIAS)
         im.save(image_path, 'PNG')
