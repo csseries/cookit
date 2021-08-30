@@ -6,7 +6,8 @@ from termcolor import colored
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 
-from cookit.predict_lite import Predictor
+#from cookit.predict_lite import Predictor
+from cookit.predict import Predictor
 
 
 predictor = Predictor()
