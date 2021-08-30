@@ -33,6 +33,17 @@ OIv4_INGREDIENTS_ONLY = [
     'Waffle', 'Watermelon','Wine', 'Winter melon', 'Zucchini'
 ]
 
+OIv4_MIN_SET = [
+    'Apple', 'Artichoke', 'Asparagus', 'Banana', 'Bell pepper',
+    'Bread', 'Broccoli', 'Cabbage', 'Cantaloupe', 'Carrot',
+    'Cheese', 'Coconut', 'Cream', 'Cucumber', 'Egg', 'Fish', 'Grape',
+    'Grapefruit', 'Honeycomb', 'Ice cream', 'Lemon', 'Lobster', 'Mango',
+    'Milk', 'Mushroom', 'Orange', 'Oyster', 'Pasta', 'Peach', 'Pear',
+    'Pineapple', 'Pomegranate', 'Potato',
+    'Pumpkin', 'Radish', 'Salad', 'Shellfish', 'Shrimp',
+    'Strawberry', 'Tomato', 'Watermelon', 'Winter melon', 'Zucchini'
+]
+
 TEST_FOOD_CLASSES = [
     'Apple', 'Apricot', 'Artichoke', 'Asparagus', 'Aubergine', 'Avocado',
     'Banana', 'Basil', 'Basilicum', 'Bean', 'Beans', 'Beet', 'Beetroot',
