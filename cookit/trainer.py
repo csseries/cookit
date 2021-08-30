@@ -1,13 +1,15 @@
-import joblib
+import numpy as np
+import os
+
+#from tflite_model_maker.config import ExportFormat
+#from tflite_model_maker import model_spec
+#from tflite_model_maker import object_detector
+
+import tensorflow as tf
+assert tf.__version__.startswith('2')
+
 from termcolor import colored
-
-from sklearn.compose import ColumnTransformer
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-
-from cookit.data import get_data
+from cookit.data import get_random_slice
 
 
 class Trainer(object):
@@ -16,9 +18,8 @@ class Trainer(object):
             X: pandas DataFrame
             y: pandas Series
         """
-        self.pipeline = None
-        self.X = X
-        self.y = y
+        self.model = None
+        self.spec = model_spec.get('efficientdet_lite4')
 
     def set_pipeline(self):
         """defines the pipeline as a class attribute"""
@@ -33,19 +34,19 @@ class Trainer(object):
 
     def save_model_locally(self):
         """Save the model into a .joblib format"""
-
-        joblib.dump(self.pipeline, 'model.joblib')
+        # see https://www.tensorflow.org/lite/tutorials/model_maker_object_detection#export_to_different_formats
+        # model.export(export_dir='.', export_format=[ExportFormat.SAVED_MODEL, ExportFormat.LABEL])
         print(colored("model.joblib saved locally", "green"))
 
 
 if __name__ == "__main__":
     # Get and clean data
-    df = get_data(nrows=1000)
+    df = get_random_slice(nrows=1000)
 
     y = df["classes"]
     X = df.drop("classes", axis=1)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
     # Train and save model, locally and
     trainer = Trainer(X_train, y_train)
