@@ -3,12 +3,20 @@ import tensorflow as tf
 from tflite_model_maker.config import ExportFormat
 from tflite_model_maker import model_spec
 from tflite_model_maker import object_detector
+import pycocotools
 from termcolor import colored
 
 from cookit.data import get_random_slice
 from cookit.params import BUCKET_NAME
 
+# make tensorflow less verbose
+tf.get_logger().setLevel('ERROR')
+from absl import logging
+
+logging.set_verbosity(logging.ERROR)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+
 
 
 class Trainer(object):

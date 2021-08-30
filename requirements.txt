@@ -11,6 +11,7 @@ scikit-learn
 tensorflow
 tensorflow_hub
 tflite-model-maker
+pycocotools
 
 # tests/linter
 black
