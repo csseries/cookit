@@ -10,6 +10,7 @@ pandas
 scikit-learn
 tensorflow
 tensorflow_hub
+tflite-model-maker
 
 # tests/linter
 black

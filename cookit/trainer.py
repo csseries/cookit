@@ -1,58 +1,61 @@
-import numpy as np
-import os
-
-#from tflite_model_maker.config import ExportFormat
-#from tflite_model_maker import model_spec
-#from tflite_model_maker import object_detector
-
 import tensorflow as tf
-assert tf.__version__.startswith('2')
+from tflite_model_maker.config import ExportFormat
+from tflite_model_maker import model_spec
+from tflite_model_maker import object_detector
 
 from termcolor import colored
 from cookit.data import get_random_slice
-
+from cookit.params import BUCKET_NAME
 
 class Trainer(object):
-    def __init__(self, X, y):
+    def __init__(self):
         """
-            X: pandas DataFrame
-            y: pandas Series
+
         """
         self.model = None
-        self.spec = model_spec.get('efficientdet_lite4')
+        self._spec = model_spec.get('efficientdet_lite4')
 
-    def set_pipeline(self):
-        """defines the pipeline as a class attribute"""
-        pass
+    def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv'):
+        data = object_detector.DataLoader.from_csv(csv_path)
+        self.train_data = data[0]
+        self.val_data = data[1]
+        self.test_data = data[2]
 
-    def run(self):
+    def run(self, batch_size=32, train_whole_model=True):
         """fits model"""
-        pass
+        self.model = object_detector.create(self.train_data,
+                                       model_spec=self._spec,
+                                       batch_size=batch_size,
+                                       train_whole_model=train_whole_model,
+                                       validation_data=self.val_data)
 
-    def evaluate(self, X_test, y_test):
+    def evaluate(self):
         """evaluates the pipeline on df_test"""
+        self.model.evaluate(self.test_data)
 
-    def save_model_locally(self):
+    def save_model_locally(self, model_name='model.tflite'):
         """Save the model into a .joblib format"""
         # see https://www.tensorflow.org/lite/tutorials/model_maker_object_detection#export_to_different_formats
         # model.export(export_dir='.', export_format=[ExportFormat.SAVED_MODEL, ExportFormat.LABEL])
-        print(colored("model.joblib saved locally", "green"))
+        self.model.export(export_dir='.',
+                          tflite_filename='model.tflite',
+                          label_filename='labels.txt',
+                          saved_model_filename=model_name,
+                          #export_format=None,
+                          )
+
+        print(colored(f"Saved trained model to {model_name}", "green"))
 
 
 if __name__ == "__main__":
+    pass
     # Get and clean data
-    df = get_random_slice(nrows=1000)
+    # df = get_random_slice('infile', 'outfile', size=1000)
 
-    y = df["classes"]
-    X = df.drop("classes", axis=1)
 
-    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-
-    # Train and save model, locally and
-    trainer = Trainer(X_train, y_train)
-    trainer.set_experiment_name('xp2')
-    trainer.run()
-    score = trainer.evaluate(X_test, y_test)
-    print(f"Score of model : {score}")
-
-    trainer.save_model_locally()
+    # # Train and save model, locally and
+    # trainer = Trainer()
+    # trainer.run()
+    # score = trainer.evaluate()
+    # print(f"Score of model : {score}")
+    # trainer.save_model_locally()
