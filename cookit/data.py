@@ -3,7 +3,7 @@ import json
 import math
 import pandas as pd
 from google.cloud import storage
-from cookit.utils import OIv4_INGREDIENTS_ONLY, TEST_FOOD_CLASSES
+from cookit.utils import OIv4_INGREDIENTS_ONLY, TEST_FOOD_CLASSES, OIv4_MIN_SET
 from cookit.params import BUCKET_NAME
 
 
@@ -30,7 +30,7 @@ def get_oi_dataset_df(path='oi_food.csv', nrows=1000):
 
 # Should we perhaps keep non-food-related labels in the test set?
 def convert_oi_metadata(labelfile_path, baseurl='gs://somewhere', csv_path='tf_training.csv',
-                        test_split=0.2, val_split=0.1):
+                        test_split=0.2, val_split=0.1, classes=OIv4_INGREDIENTS_ONLY):
     """ Converts a json file in format fiftyone.types.FiftyOneImageDetectionDataset
         to a format as it is expected by the tflite_model_maker.object_detector
 
@@ -63,7 +63,7 @@ def convert_oi_metadata(labelfile_path, baseurl='gs://somewhere', csv_path='tf_t
             uuid_count += 1
             for label_items in labels:
                 label = classes[label_items['label']]
-                if label in OIv4_INGREDIENTS_ONLY or label in TEST_FOOD_CLASSES:
+                if label in classes:
                     food_classes.append(label)
                     bbox_count += 1
                     bb = label_items['bounding_box']
@@ -95,17 +95,22 @@ def convert_oi_metadata(labelfile_path, baseurl='gs://somewhere', csv_path='tf_t
     }
 
 
-def get_random_slice(csv_path, out_csv_path, size, return_df=True):
+def get_random_slice(csv_path=f'gs://{BUCKET_NAME}/oi_food.csv',
+                     out_csv_name='oi_food_sample.csv',
+                     size=1000,
+                     return_df=True):
     df = pd.read_csv(csv_path)
     sample = df.sample(size)
-    sample.to_csv(out_csv_path, index=False)
+    sample.to_csv(out_csv_name, index=False)
+    upload_file_to_bucket(out_csv_name)
+    print("Uploaded CSV file containing {size} samples to gs://{BUCKET_NAME}/{out_csv_name}")
     if return_df:
         return sample
 
 
-def create_dataset(json_path='labels.json', csv_path='oi_food.csv'):
+def create_dataset(json_path='labels.json', csv_path='oi_food.csv', classes=OIv4_MIN_SET):
     download_file_from_bucket(json_path)
-    ds = convert_oi_metadata(json_path, csv_path=csv_path)
+    ds = convert_oi_metadata(json_path, csv_path=csv_path, classes=classes)
     upload_file_to_bucket(csv_path)
     print(f"Uploaded new dataset to gs://{BUCKET_NAME}/{csv_path}")
 
