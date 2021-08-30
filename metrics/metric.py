@@ -123,7 +123,7 @@ def calculating_score():
     print(perc_false_predictions, "percentage of false predictions")
 
 
-#retrieve_info_from_csv()
-#download_test_images()
-making_prediction()
-#calculating_score()
+if __name__ == '__main__':
+    download_test_images()
+    making_prediction()
+    calculating_score()
