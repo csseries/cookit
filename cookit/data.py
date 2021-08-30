@@ -29,7 +29,7 @@ def get_oi_dataset_df(path='oi_food.csv', nrows=1000):
 
 
 # Should we perhaps keep non-food-related labels in the test set?
-def convert_oi_metadata(labelfile_path, baseurl='gs://somewhere', csv_path='tf_training.csv',
+def convert_oi_metadata(labelfile_path, baseurl=f'gs://{BUCKET_NAME}', csv_path='tf_training.csv',
                         test_split=0.2, val_split=0.1, train_classes=OIv4_INGREDIENTS_ONLY):
     """ Converts a json file in format fiftyone.types.FiftyOneImageDetectionDataset
         to a format as it is expected by the tflite_model_maker.object_detector

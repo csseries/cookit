@@ -25,7 +25,7 @@ class Trainer(object):
 
         """
         self.model = None
-        self._spec = model_spec.get('efficientdet_lite4')
+        self._spec = model_spec.get('efficientdet_lite0')
 
     def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv'):
         data = object_detector.DataLoader.from_csv(csv_path)
