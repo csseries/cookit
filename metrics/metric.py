@@ -2,13 +2,19 @@ import csv
 from pathlib import Path
 import requests
 import os
+import shutil
 import argparse
-from tensorflow._api.v2 import image
+from cookit.utils import OIv4_FOOD_CLASSES
 from cookit.predict import Predictor
+
+oi_classes = [ingr.lower() for ingr in OIv4_FOOD_CLASSES]
 
 rel_path = os.path.dirname(__file__)
 test_folder = "images_from_csv"
 image_path = os.path.join(rel_path, test_folder)
+
+# instanciating here causes very long startup time
+predictor = Predictor()
 
 
 def retrieve_info_from_csv(nr_images=-1):
@@ -25,7 +31,7 @@ def retrieve_info_from_csv(nr_images=-1):
 
     for row in csv_list:
         link_list.append(row[0])
-        food_list.append(row[1:])
+        food_list.append([ingr.strip() for ingr in row[1].split(',')])
 
     link_list.pop(0)
     food_list.pop(0)
@@ -60,10 +66,6 @@ def making_prediction(nr_images=-1):
     img_sort_list = []
     sorted_img_list = []
 
-    # makes sure we have a Predictor instance when calling the function not from __main__
-    if not 'predictor' in globals():
-        predictor = Predictor()
-
     for pic in os.listdir(image_path)[0:nr_images]:
 
         if pic == ".ipynb_checkpoints":
@@ -80,7 +82,9 @@ def making_prediction(nr_images=-1):
 
     for img in sorted_img_list:
         try:
+            print(f"Predict image {img}")
             prediction, scores, bboxes = predictor.predict(f"{image_path}/{img}")
+            print(f"Found ingredients in {img}: {prediction}")
             prediction_dict[f"{counter}"] = prediction
             counter += 1
         except:
@@ -95,30 +99,35 @@ def calculating_score(nr_images=-1):
     download_test_images(ingredients_dict) # passing nr_images is done for safety reasons only
     prediction_dict = making_prediction(nr_images)  # passing nr_images is done for safety reasons only
 
-    counter = 0
-    volumne_counter = 0
+    volumne_counter = 0 #len([item[0] for item in ingredients_dict.values()])
     correct_counter = 0
+    correct_counter_oi = 0
     false_predict_counter = 0
+    false_predict_counter_oi = 0
     volumne_pred_counter = 0
 
-    while counter <= 65:
 
-        for items in ingredients_dict[f"{counter}"][0]:
-            number_words = items.count(",") + 1
+    for key, value in ingredients_dict.items():
+        ingredients = value[0]
+        number_words = len(ingredients)
+        volumne_counter += number_words
+        predictions = prediction_dict[key]
 
-            volumne_counter += number_words
+        for pred in predictions:
+            pred = pred.lower()
+            volumne_pred_counter += 1
+            print(f"Compare {pred} against {ingredients}")
+            if pred in ingredients:
+                correct_counter += 1
+            else:
+                false_predict_counter += 1
 
-            for pred in prediction_dict[f"{counter}"]:
-                pred = pred.lower()
-                volumne_pred_counter += 1
+            if pred in oi_classes:
+                correct_counter_oi += 1
+            else:
+                false_predict_counter_oi += 1
 
-                if pred in items:
-                    correct_counter += 1
-                else:
-                    false_predict_counter += 1
-
-        counter += 1
-
+    print("##############################################")
     print(correct_counter, "correct_counter")
     print(volumne_counter, "csv volumne_counter")
     print(volumne_pred_counter, "volumne_pred_counter")
@@ -129,6 +138,7 @@ def calculating_score(nr_images=-1):
 
     perc_false_predictions = round(false_predict_counter / volumne_pred_counter, 2)
     print(perc_false_predictions, "percentage of false predictions")
+    print("##############################################")
 
 
 if __name__ == '__main__':
@@ -137,14 +147,11 @@ if __name__ == '__main__':
                         help="Number of images to be downloaded and tested")
     args = parser.parse_args()
 
-    # instanciating here avoids very long startup time
-    predictor = Predictor()
-
     print(f"Calcuclate score based on {args.nr_images} images")
     calculating_score(nr_images=args.nr_images)
 
     # delete downloaded files after prediction
     try:
-        os.rmdir(rel_path)
+        shutil.rmtree(image_path)
     except OSError as e:  ## if failed, report it back to logs
         print("Error: %s - %s." % (e.filename, e.strerror))
