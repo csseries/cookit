@@ -99,9 +99,12 @@ def calculating_score(nr_images=-1):
     total_amount_ingredients_counter = 0 #len([item[0] for item in ingredients_dict.values()])
     total_amount_predictions_counter = 0
     correct_predict_counter = 0
-    correct_predict_counter_oi = 0
+    correct_oi_predict_counter = 0
     false_predict_counter = 0
-    false_predict_counter_oi = 0
+    false_oi_predict_counter = 0
+
+    # specific to oi_classes
+    oi_ingredients_list_volumne_counter = 0
 
     for key, value in ingredients_dict.items():
         ingredients = value[0]
@@ -119,25 +122,55 @@ def calculating_score(nr_images=-1):
             else:
                 false_predict_counter += 1
 
-            for ingr in ingredients:
-                if (pred in oi_classes) and (pred == ingr):
-                    correct_predict_counter_oi += 1
-                else:
-                    false_predict_counter_oi += 1
+
+
+        oi_ingredients_list = []
+
+        print(oi_ingredients_list, "oi_ingrdients_list --> empty")
+
+        for ingr in ingredients:
+            if ingr in oi_classes:
+                oi_ingredients_list.append(ingr)
+
+        print(oi_ingredients_list, "full with ingrdients from oi_classes")
+        oi_ingredients_list_volumne_counter += len(oi_ingredients_list)
+
+        for pred in predictions:
+            pred = pred.lower()
+            print(pred, "predictions")
+            if pred in oi_ingredients_list:
+                print(pred, "pred correct")
+                correct_oi_predict_counter += 1
+            else:
+                print(pred, "pred false")
+                false_oi_predict_counter += 1
+
+        oi_ingredients_list.clear()
+        print(oi_ingredients_list, "oi_ingredirents_list --> clear")
+
+
+
+
+
 
     print("##############################################")
     print("Amount of correct predictions: ", correct_predict_counter)
     print("Amount of false predictions: ", false_predict_counter)
     print("Total amount of ingredients in csv file: ", total_amount_ingredients_counter)
     print("Total amount of predictions made: ", total_amount_predictions_counter)
-    print("Amount of correct predictions found in algorithm classes: ",correct_predict_counter_oi)
-    #print("Amount of false predictions found in algorithm classes: ",false_predict_counter_oi)
+    print("Amount of correct predictions found in algorithm classes: ",correct_oi_predict_counter)
+    print("Amount of false predictions found in algorithm classes: ",false_oi_predict_counter)
 
     accuracy = round(correct_predict_counter / total_amount_ingredients_counter, 2)
     print("Accuracy: ",accuracy)
 
     perc_false_predictions = round(false_predict_counter / total_amount_predictions_counter, 2)
     print("Percentage of false predictions: ",perc_false_predictions*100)
+    print("                                              ")
+    print("---------------Oi Classes Metrics-------------")
+    print("Amount of correct predictions of oi classes: ",correct_oi_predict_counter)
+    print("Oi classes accuracy: ",round(correct_oi_predict_counter / oi_ingredients_list_volumne_counter,2))
+    print("Oi classes percentage of wrong predictions: ",round(false_oi_predict_counter / total_amount_predictions_counter,2))
     print("##############################################")
 
     return accuracy, perc_false_predictions
