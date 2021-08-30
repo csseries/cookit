@@ -18,6 +18,7 @@ predictor = Predictor()
 
 
 def retrieve_info_from_csv(nr_images=-1):
+    # function creates the ingredients_dict for later comparison to the predictions
     csv_list = []
     link_list = []
     food_list = []
@@ -41,7 +42,6 @@ def retrieve_info_from_csv(nr_images=-1):
 
         counter += 1
 
-    print(ingredients_dict)
     return ingredients_dict
 
 
@@ -52,7 +52,6 @@ def download_test_images(ingredients_dict):
     Path(image_path).mkdir(parents=True, exist_ok=True)
 
     for url in ingredients_dict.values():
-        print(f"Download image from {url[1]}")
         image = requests.get(url[1]).content
 
         with open(f'{image_path}/{counter}.jpg', 'wb') as writer:
@@ -66,7 +65,7 @@ def making_prediction(nr_images=-1):
     img_sort_list = []
     sorted_img_list = []
 
-    for pic in os.listdir(image_path)[0:nr_images]:
+    for pic in os.listdir(image_path)[0:nr_images+1]:
 
         if pic == ".ipynb_checkpoints":
             pass
@@ -82,9 +81,7 @@ def making_prediction(nr_images=-1):
 
     for img in sorted_img_list:
         try:
-            print(f"Predict image {img}")
             prediction, scores, bboxes = predictor.predict(f"{image_path}/{img}")
-            print(f"Found ingredients in {img}: {prediction}")
             prediction_dict[f"{counter}"] = prediction
             counter += 1
         except:
@@ -99,46 +96,51 @@ def calculating_score(nr_images=-1):
     download_test_images(ingredients_dict) # passing nr_images is done for safety reasons only
     prediction_dict = making_prediction(nr_images)  # passing nr_images is done for safety reasons only
 
-    volumne_counter = 0 #len([item[0] for item in ingredients_dict.values()])
-    correct_counter = 0
-    correct_counter_oi = 0
+    total_amount_ingredients_counter = 0 #len([item[0] for item in ingredients_dict.values()])
+    total_amount_predictions_counter = 0
+    correct_predict_counter = 0
+    correct_predict_counter_oi = 0
     false_predict_counter = 0
     false_predict_counter_oi = 0
-    volumne_pred_counter = 0
-
 
     for key, value in ingredients_dict.items():
         ingredients = value[0]
         number_words = len(ingredients)
-        volumne_counter += number_words
+        total_amount_ingredients_counter += number_words
         predictions = prediction_dict[key]
 
         for pred in predictions:
+            # iterate through every prediction and check if it is in ingredients
             pred = pred.lower()
-            volumne_pred_counter += 1
-            print(f"Compare {pred} against {ingredients}")
+            total_amount_predictions_counter += 1
+
             if pred in ingredients:
-                correct_counter += 1
+                correct_predict_counter += 1
             else:
                 false_predict_counter += 1
 
-            if pred in oi_classes:
-                correct_counter_oi += 1
-            else:
-                false_predict_counter_oi += 1
+            for ingr in ingredients:
+                if (pred in oi_classes) and (pred == ingr):
+                    correct_predict_counter_oi += 1
+                else:
+                    false_predict_counter_oi += 1
 
     print("##############################################")
-    print(correct_counter, "correct_counter")
-    print(volumne_counter, "csv volumne_counter")
-    print(volumne_pred_counter, "volumne_pred_counter")
-    print(false_predict_counter, "false_predict_counter")
+    print("Amount of correct predictions: ", correct_predict_counter)
+    print("Amount of false predictions: ", false_predict_counter)
+    print("Total amount of ingredients in csv file: ", total_amount_ingredients_counter)
+    print("Total amount of predictions made: ", total_amount_predictions_counter)
+    print("Amount of correct predictions found in algorithm classes: ",correct_predict_counter_oi)
+    #print("Amount of false predictions found in algorithm classes: ",false_predict_counter_oi)
 
-    accuracy = round(correct_counter / volumne_counter, 2)
-    print(accuracy, "accuracy")
+    accuracy = round(correct_predict_counter / total_amount_ingredients_counter, 2)
+    print("Accuracy: ",accuracy)
 
-    perc_false_predictions = round(false_predict_counter / volumne_pred_counter, 2)
-    print(perc_false_predictions, "percentage of false predictions")
+    perc_false_predictions = round(false_predict_counter / total_amount_predictions_counter, 2)
+    print("Percentage of false predictions: ",perc_false_predictions*100)
     print("##############################################")
+
+    return accuracy, perc_false_predictions
 
 
 if __name__ == '__main__':
