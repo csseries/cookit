@@ -1,14 +1,17 @@
 import csv
-from cookit.predict import Predictor
-import numpy
+from pathlib import Path
 import requests
 import os
+import argparse
+from tensorflow._api.v2 import image
+from cookit.predict import Predictor
+
+rel_path = os.path.dirname(__file__)
+test_folder = "images_from_csv"
+image_path = os.path.join(rel_path, test_folder)
 
 
-predictor = Predictor()
-
-
-def retrieve_info_from_csv():
+def retrieve_info_from_csv(nr_images=-1):
     csv_list = []
     link_list = []
     food_list = []
@@ -16,10 +19,9 @@ def retrieve_info_from_csv():
 
     counter = 0
 
-    with open('metrics/food_testing_set.csv') as csvfile:
-        read = csv.reader(csvfile, delimiter=";")
-        for row in read:
-            csv_list.append(row)
+    with open(f"{rel_path}/food_testing_set.csv") as csvfile:
+        reader = csv.reader(csvfile, delimiter=";")
+        csv_list = list(reader)[0:nr_images+1]
 
     for row in csv_list:
         link_list.append(row[0])
@@ -33,29 +35,36 @@ def retrieve_info_from_csv():
 
         counter += 1
 
+    print(ingredients_dict)
     return ingredients_dict
 
 
-def download_test_images():
+def download_test_images(ingredients_dict):
+    print(f"Download {len(ingredients_dict)} images")
     counter = 0
-    ingredients_dict = retrieve_info_from_csv()
+    # create local folder for downloads if not exists
+    Path(image_path).mkdir(parents=True, exist_ok=True)
 
     for url in ingredients_dict.values():
+        print(f"Download image from {url[1]}")
         image = requests.get(url[1]).content
 
-        with open(f'metrics/images_from_csv/{counter}.jpg', 'wb') as writer:
+        with open(f'{image_path}/{counter}.jpg', 'wb') as writer:
             writer.write(image)
+        counter += 1
 
-    counter += 1
 
-
-def making_prediction():
+def making_prediction(nr_images=-1):
     prediction_dict = {}
     counter = 0
     img_sort_list = []
     sorted_img_list = []
 
-    for pic in os.listdir("metrics/images_from_csv"):
+    # makes sure we have a Predictor instance when calling the function not from __main__
+    if not 'predictor' in globals():
+        predictor = Predictor()
+
+    for pic in os.listdir(image_path)[0:nr_images]:
 
         if pic == ".ipynb_checkpoints":
             pass
@@ -71,21 +80,20 @@ def making_prediction():
 
     for img in sorted_img_list:
         try:
-            prediction = predictor.predict(f"metrics/images_from_csv/{img}")
+            prediction, scores, bboxes = predictor.predict(f"{image_path}/{img}")
             prediction_dict[f"{counter}"] = prediction
             counter += 1
         except:
             prediction_dict[f"{counter}"] = ["exception"]
             counter += 1
 
-    print(prediction_dict)
-
     return prediction_dict
 
 
-def calculating_score():
-    ingredients_dict = retrieve_info_from_csv()
-    prediction_dict = making_prediction()
+def calculating_score(nr_images=-1):
+    ingredients_dict = retrieve_info_from_csv(nr_images)
+    download_test_images(ingredients_dict) # passing nr_images is done for safety reasons only
+    prediction_dict = making_prediction(nr_images)  # passing nr_images is done for safety reasons only
 
     counter = 0
     volumne_counter = 0
@@ -123,7 +131,20 @@ def calculating_score():
     print(perc_false_predictions, "percentage of false predictions")
 
 
-#retrieve_info_from_csv()
-#download_test_images()
-making_prediction()
-#calculating_score()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", dest='nr_images', type=int, default=-1,
+                        help="Number of images to be downloaded and tested")
+    args = parser.parse_args()
+
+    # instanciating here avoids very long startup time
+    predictor = Predictor()
+
+    print(f"Calcuclate score based on {args.nr_images} images")
+    calculating_score(nr_images=args.nr_images)
+
+    # delete downloaded files after prediction
+    try:
+        os.rmdir(rel_path)
+    except OSError as e:  ## if failed, report it back to logs
+        print("Error: %s - %s." % (e.filename, e.strerror))
