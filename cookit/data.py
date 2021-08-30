@@ -103,9 +103,29 @@ def get_random_slice(csv_path=f'gs://{BUCKET_NAME}/oi_food.csv',
     sample = df.sample(size)
     sample.to_csv(out_csv_name, index=False)
     upload_file_to_bucket(out_csv_name)
-    print("Uploaded CSV file containing {size} samples to gs://{BUCKET_NAME}/{out_csv_name}")
+    print(f"Uploaded CSV file containing {size} samples to gs://{BUCKET_NAME}/{out_csv_name}")
     if return_df:
         return sample
+
+def get_random_slice_balanced(csv_file='oi_food_minimal.csv',
+                              out_csv_file='oi_food_minimal_balanced.csv',
+                              label_size=50,
+                              gcloud_upload=False):
+    df = get_oi_dataset_df(csv_file, nrows=100_000)
+    out_df = pd.DataFrame(columns=df.columns)
+    for label in df.label.unique():
+        sample = df[(df.set == 'TRAINING') & (df.label == label)].sample(int(label_size*0.7), replace=True)
+        out_df = pd.concat([out_df, sample])
+        sample = df[(df.set == 'VALIDATION') & (df.label == label)].sample(int(label_size*0.2), replace=True)
+        out_df = pd.concat([out_df, sample])
+        sample = df[(df.set == 'TEST') & (df.label == label)].sample(int(label_size*0.1), replace=True)
+        out_df = pd.concat([out_df, sample])
+    out_df.to_csv(out_csv_file, index=False)
+    if gcloud_upload:
+        upload_file_to_bucket(out_csv_file)
+    return out_df
+
+
 
 
 def create_dataset(json_path='labels.json', csv_path='oi_food.csv', classes=OIv4_MIN_SET):
