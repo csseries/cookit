@@ -145,6 +145,6 @@ if __name__ == '__main__':
 
     # delete downloaded files after prediction
     try:
-        os.remove(rel_path)
+        os.rmdir(rel_path)
     except OSError as e:  ## if failed, report it back to logs
         print("Error: %s - %s." % (e.filename, e.strerror))
