@@ -1,11 +1,15 @@
+import os
 import tensorflow as tf
 from tflite_model_maker.config import ExportFormat
 from tflite_model_maker import model_spec
 from tflite_model_maker import object_detector
-
 from termcolor import colored
+
 from cookit.data import get_random_slice
 from cookit.params import BUCKET_NAME
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 
 class Trainer(object):
     def __init__(self):
