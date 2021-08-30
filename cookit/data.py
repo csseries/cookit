@@ -110,7 +110,7 @@ def get_random_slice(csv_path=f'gs://{BUCKET_NAME}/oi_food.csv',
 
 def create_dataset(json_path='labels.json', csv_path='oi_food.csv', classes=OIv4_MIN_SET):
     download_file_from_bucket(json_path)
-    ds = convert_oi_metadata(json_path, csv_path=csv_path, classes=classes)
+    ds = convert_oi_metadata(json_path, csv_path=csv_path, food_classes=classes)
     upload_file_to_bucket(csv_path)
     print(f"Uploaded new dataset to gs://{BUCKET_NAME}/{csv_path}")
 
