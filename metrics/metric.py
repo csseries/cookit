@@ -41,12 +41,12 @@ def download_test_images():
     ingredients_dict = retrieve_info_from_csv()
 
     for url in ingredients_dict.values():
+        print(f"Download image from {url[1]}")
         image = requests.get(url[1]).content
 
         with open(f'metrics/images_from_csv/{counter}.jpg', 'wb') as writer:
             writer.write(image)
-
-    counter += 1
+        counter += 1
 
 
 def making_prediction():
