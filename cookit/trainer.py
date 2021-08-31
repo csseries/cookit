@@ -92,7 +92,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("csv", help="Path to dataset CSV file")
     parser.add_argument("model_name", help="Filename for trained model")
-    parser.add_argument("-s", "--spec", help="TF Lite Specification")
+    parser.add_argument("-s", "--spec", default='efficientdet_lite0', help="TF Lite Specification")
     parser.add_argument("-e", "--epochs", default=50, help="Nr of epochs")
     parser.add_argument("-b", "--batch_size", default=64, help="Batch size")
     parser.add_argument("-w", "--train_whole_model", default=True, help="Train whole model or only last layers")
