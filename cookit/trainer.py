@@ -28,6 +28,7 @@ class Trainer(object):
         self._spec = model_spec.get(spec)
 
     def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv'):
+        print(f"Downloading images from {csv_path}")
         data = object_detector.DataLoader.from_csv(csv_path)
         self.train_data = data[0]
         self.val_data = data[1]
@@ -67,6 +68,6 @@ if __name__ == "__main__":
     trainer.load_data('gs://taxifare_bucket_fast-drake-318911/oi_food_minimal_balanced.csv')
     trainer.run()
     eval_dict = trainer.evaluate()
-    trainer.save_model_locally('model_min_3k.tflite')
-    upload_file_to_bucket('model_min_3k.tflite')
+    trainer.save_model_locally('model_min_8k_balanced.tflite')
+    upload_file_to_bucket('model_min_8k_balanced.tflite')
     upload_file_to_bucket('labels.txt')

@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import argparse
+from cookit.data import get_random_slice
+from cookit.utils import OIv4_MIN_SET
+from cookit.trainer import Trainer
+
+
+
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(description='Train a TFLite Model for cookit')
+
+#     parser.add_argument('csv_file', help='CSV File ')
+#     parser.add_argument('-s','--spec', help='TFLite model configuration String, see \
+#                         https://www.tensorflow.org/lite/api_docs/python/tflite_model_maker/object_detector',
+#                         default='efficientdet_lite0')
+#     parser.add_argument('-e','--epochs', help='Description for bar argument', required=True)
+#     parser.add_argument('-b','--batch_size', help='Description for bar argument', required=True)
