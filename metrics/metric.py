@@ -5,7 +5,7 @@ import os
 import shutil
 import argparse
 from cookit.utils import OIv4_FOOD_CLASSES
-from cookit.predict import Predictor
+from cookit.predict_lite import Predictor
 
 oi_classes = [ingr.lower() for ingr in OIv4_FOOD_CLASSES]
 

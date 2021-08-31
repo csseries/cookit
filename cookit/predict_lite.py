@@ -13,7 +13,7 @@ class Predictor():
         """
         A basic call for predictions.
         """
-        self.model = self._get_model()
+        self.model = self._get_model('model_min_8k_balanced.tflite')
 
         # NOTE: The order of this list hardcoded here, and needs to be changed when re-training the model!
         # When exporting the model in tflite format, the model_spec is lost, so we cannot do it like that:
@@ -21,7 +21,17 @@ class Predictor():
         # label_map = model.model_spec.config.label_map
         # for label_id, label_name in label_map.as_dict().items():
         #   classes[label_id-1] = label_name
-        self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
+        #self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
+        self.classes = [
+            'Pumpkin', 'Ice cream', 'Salad', 'Bread', 'Coconut', 'Grape',
+            'Mushroom', 'Honeycomb', 'Fish', 'Oyster', 'Pomegranate', 'Radish',
+            'Watermelon', 'Pasta', 'Cabbage', 'Strawberry', 'Apple', 'Orange',
+            'Potato', 'Banana', 'Pear', 'Shellfish', 'Tomato', 'Cheese',
+            'Carrot', 'Shrimp', 'Lemon', 'Artichoke', 'Broccoli',
+            'Bell pepper', 'Pineapple', 'Lobster', 'Milk', 'Mango',
+            'Grapefruit', 'Cantaloupe', 'Peach', 'Cream', 'Zucchini',
+            'Cucumber', 'Winter melon'
+        ]
 
     def _get_model(self, model_path='model.tflite'):
         """ Load the model from a local path """
@@ -57,10 +67,10 @@ class Predictor():
         self.model.invoke()
 
         # Get all outputs from the model
-        boxes = self.get_output_tensor(0)
-        classes = self.get_output_tensor(1)
-        scores = self.get_output_tensor(2)
-        count = int(self.get_output_tensor(3))
+        boxes = self.get_output_tensor(1)
+        classes = self.get_output_tensor(3)
+        scores = self.get_output_tensor(0)
+        count = int(self.get_output_tensor(2))
 
         results = []
         for i in range(count):
@@ -84,7 +94,7 @@ class Predictor():
         results = self.detect_objects(preprocessed_image)
         return results
 
-    def predict(self, image_path, threshold=0.5):
+    def predict(self, image_path, threshold=0.1):
         detection_result_image = self.run_detection(image_path, threshold)
         print(f"Received file for prediction: {image_path}")
 
