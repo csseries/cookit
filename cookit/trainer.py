@@ -95,11 +95,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--spec", default='efficientdet_lite0', help="TF Lite Specification")
     parser.add_argument("-e", "--epochs", type=int, default=50, help="Nr of epochs")
     parser.add_argument("-b", "--batch_size", type=int, default=64, help="Batch size")
-    parser.add_argument("-w",
-                        "--train_whole_model",
-                        type=bool,
-                        action=argparse.BooleanOptionalAction,
-                        help="Train whole model and not just last layers")
+    parser.add_argument("-w", "--train_whole_model", type=bool, default=True, help="Train whole model or only last layers")
 
     args = parser.parse_args()
 
