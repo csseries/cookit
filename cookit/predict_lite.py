@@ -22,16 +22,16 @@ class Predictor():
         # for label_id, label_name in label_map.as_dict().items():
         #   classes[label_id-1] = label_name
         #self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
-        self.classes = [
-            'Pumpkin', 'Ice cream', 'Salad', 'Bread', 'Coconut', 'Grape',
-            'Mushroom', 'Honeycomb', 'Fish', 'Oyster', 'Pomegranate', 'Radish',
-            'Watermelon', 'Pasta', 'Cabbage', 'Strawberry', 'Apple', 'Orange',
-            'Potato', 'Banana', 'Pear', 'Shellfish', 'Tomato', 'Cheese',
-            'Carrot', 'Shrimp', 'Lemon', 'Artichoke', 'Broccoli',
-            'Bell pepper', 'Pineapple', 'Lobster', 'Milk', 'Mango',
-            'Grapefruit', 'Cantaloupe', 'Peach', 'Cream', 'Zucchini',
-            'Cucumber', 'Winter melon'
-        ]
+        self.classes_map = {
+            1: 'label', 2: 'Pumpkin', 3: 'Ice cream', 4: 'Salad', 5: 'Bread',
+            6: 'Coconut', 7: 'Grape', 8: 'Mushroom', 9: 'Honeycomb', 10: 'Fish',
+            11: 'Oyster', 12: 'Pomegranate', 13: 'Radish', 14: 'Watermelon',
+            15: 'Pasta', 16: 'Cabbage', 17: 'Strawberry', 18: 'Apple', 19: 'Orange',
+            20: 'Potato', 21: 'Banana', 22: 'Pear', 23: 'Shellfish', 24: 'Tomato',
+            25: 'Cheese', 26: 'Carrot', 27: 'Shrimp', 28: 'Lemon', 29: 'Artichoke',
+            30: 'Broccoli', 31: 'Bell pepper', 32: 'Pineapple', 33: 'Lobster',
+            34: 'Milk', 35: 'Mango', 36: 'Grapefruit', 37: 'Cantaloupe',
+            38: 'Peach', 39: 'Cream', 40: 'Zucchini', 41: 'Cucumber', 42: 'Winter melon'}
 
     def _get_model(self, model_path='model.tflite'):
         """ Load the model from a local path """
@@ -104,7 +104,7 @@ class Predictor():
 
         for result in detection_result_image:
             if result['score'] > threshold:
-                res_class = self.classes[result['class_id']]
+                res_class = self.classes_map[result['class_id']]
                 # do not return redundant ingredients
                 if res_class not in ingredients:
                     ingredients.append(res_class)
