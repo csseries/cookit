@@ -24,7 +24,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 class Trainer(object):
     def __init__(self, spec='efficientdet_lite4'):
         """
-
         """
         self.model = None
         self._spec = model_spec.get(spec)
@@ -102,7 +101,7 @@ if __name__ == "__main__":
 
     trainer = Trainer(args.spec)
     trainer.load_data(args.csv)
-    trainer.run()
+    trainer.run(args.epochs, args.batch_size, args.train_whole_model)
     eval_dict = trainer.evaluate()
     model_name, pickle_name = trainer.save_model_locally(args.model_name + '.tflite')
     upload_file_to_bucket(model_name)
