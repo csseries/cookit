@@ -80,8 +80,8 @@ class Trainer(object):
                           #saved_model_filename=model_name,
                           #export_format=None,
         )
-        pickle_name = label_filename.split('.')[0]
-        with open(f"{pickle_name}.pkl", 'wb') as f:
+        pickle_name = label_filename.split('.')[0] + '.pkl'
+        with open(f"{pickle_name}", 'wb') as f:
             pickle.dump(self.label_map, f, 0)
 
         print(colored(f"Saved trained model to {model_name}", "green"))
