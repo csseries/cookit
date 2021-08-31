@@ -25,10 +25,13 @@ def retrieve_info_from_csv(nr_images=-1):
     ingredients_dict = {}
 
     counter = 0
+    offset = 1
+    if nr_images == -1:
+        offset = 0
 
     with open(f"{rel_path}/food_testing_set.csv") as csvfile:
         reader = csv.reader(csvfile, delimiter=";")
-        csv_list = list(reader)[0:nr_images+1]
+        csv_list = list(reader)[0:nr_images+offset]
 
     for row in csv_list:
         link_list.append(row[0])
@@ -62,10 +65,14 @@ def download_test_images(ingredients_dict):
 def making_prediction(nr_images=-1):
     prediction_dict = {}
     counter = 0
+    offset = 1
+    if nr_images == -1:
+        offset = 0
+
     img_sort_list = []
     sorted_img_list = []
 
-    for pic in os.listdir(image_path)[0:nr_images+1]:
+    for pic in os.listdir(image_path)[0:nr_images+offset]:
 
         if pic == ".ipynb_checkpoints":
             pass
@@ -182,7 +189,7 @@ if __name__ == '__main__':
                         help="Number of images to be downloaded and tested")
     args = parser.parse_args()
 
-    print(f"Calcuclate score based on {args.nr_images} images")
+    print(f"Calcuclate score based on {'all' if args.nr_images == -1 else args.nr_images} images")
     calculating_score(nr_images=args.nr_images)
 
     # delete downloaded files after prediction
