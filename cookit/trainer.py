@@ -1,4 +1,5 @@
 import os
+import pickle
 import tensorflow as tf
 from tflite_model_maker.config import ExportFormat
 from tflite_model_maker import model_spec
@@ -61,8 +62,7 @@ class Trainer(object):
                                             model_spec=self._spec,
                                             batch_size=batch_size,
                                             train_whole_model=train_whole_model,
-                                            validation_data=self.val_data,
-                                            label_map=self.label_map)
+                                            validation_data=self.val_data)
 
     def evaluate(self):
         """evaluates the pipeline on df_test"""
@@ -70,7 +70,7 @@ class Trainer(object):
         print(eval_dict)
         return eval_dict
 
-    def save_model_locally(self, model_name='model.tflite', label_filename='labels.txt'):
+    def save_model_locally(self, model_name='model.tflite', label_filename='class_labels'):
         """Save the model into a .joblib format"""
         # see https://www.tensorflow.org/lite/tutorials/model_maker_object_detection#export_to_different_formats
         # model.export(export_dir='.', export_format=[ExportFormat.SAVED_MODEL, ExportFormat.LABEL])
@@ -79,16 +79,20 @@ class Trainer(object):
                           label_filename=label_filename,
                           #saved_model_filename=model_name,
                           #export_format=None,
-                          )
+        )
+        pickle_name = label_filename.split('.')[0]
+        with open(f"{pickle_name} .pkl", 'wb') as f:
+            pickle.dump(self.label_map, f, 0)
 
         print(colored(f"Saved trained model to {model_name}", "green"))
-
+        print(colored(f"Saved class labels to {pickle_name}", "green"))
+        return model_name, pickle_name
 
 if __name__ == "__main__":
     trainer = Trainer()
     trainer.load_data('gs://taxifare_bucket_fast-drake-318911/oi_food_minimal_balanced.csv')
     trainer.run()
     eval_dict = trainer.evaluate()
-    trainer.save_model_locally('model_min_8k_balanced.tflite')
-    upload_file_to_bucket('model_min_8k_balanced.tflite')
-    upload_file_to_bucket('labels.txt')
+    model_name, pickle_name = trainer.save_model_locally('model_min_8k_balanced.tflite')
+    upload_file_to_bucket(model_name)
+    upload_file_to_bucket(pickle_name)
