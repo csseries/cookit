@@ -67,7 +67,7 @@ class Trainer(object):
     def evaluate(self):
         """evaluates the pipeline on df_test"""
         eval_dict = self.model.evaluate(self.test_data)
-        print(eval_dict)
+        print(f"Model evaluation: {eval_dict}")
         return eval_dict
 
     def save_model_locally(self, model_name='model.tflite', label_filename='class_labels'):
@@ -81,7 +81,7 @@ class Trainer(object):
                           #export_format=None,
         )
         pickle_name = label_filename.split('.')[0]
-        with open(f"{pickle_name} .pkl", 'wb') as f:
+        with open(f"{pickle_name}.pkl", 'wb') as f:
             pickle.dump(self.label_map, f, 0)
 
         print(colored(f"Saved trained model to {model_name}", "green"))
