@@ -22,7 +22,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 class Trainer(object):
-    def __init__(self, spec='efficientdet_lite4'):
+    def __init__(self, spec='efficientdet_lite0'):
         """
         """
         self.model = None
