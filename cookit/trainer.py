@@ -1,5 +1,6 @@
 import os
 import pickle
+import argparse
 import tensorflow as tf
 from tflite_model_maker.config import ExportFormat
 from tflite_model_maker import model_spec
@@ -21,7 +22,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 class Trainer(object):
-    def __init__(self, spec='efficientdet_lite0'):
+    def __init__(self, spec='efficientdet_lite4'):
         """
 
         """
@@ -89,10 +90,20 @@ class Trainer(object):
         return model_name, pickle_name
 
 if __name__ == "__main__":
-    trainer = Trainer()
-    trainer.load_data('gs://taxifare_bucket_fast-drake-318911/oi_food_minimal_balanced.csv')
+    parser = argparse.ArgumentParser()
+    parser.add_argument("csv", help="Path to dataset CSV file")
+    parser.add_argument("model_name", help="Filename for trained model")
+    parser.add_argument("-s", "--spec", help="TF Lite Specification")
+    parser.add_argument("-e", "--epochs", default=50, help="Nr of epochs")
+    parser.add_argument("-b", "--batch_size", default=64, help="Batch size")
+    parser.add_argument("-w", "--train_whole_model", default=True, help="Train whole model or only last layers")
+
+    args = parser.parse_args()
+
+    trainer = Trainer(args.spec)
+    trainer.load_data(args.csv)
     trainer.run()
     eval_dict = trainer.evaluate()
-    model_name, pickle_name = trainer.save_model_locally('model_min_8k_balanced.tflite')
+    model_name, pickle_name = trainer.save_model_locally(args.model_name + '.tflite')
     upload_file_to_bucket(model_name)
     upload_file_to_bucket(pickle_name)
