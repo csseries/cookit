@@ -64,7 +64,6 @@ def download_test_images(ingredients_dict):
 
 def making_prediction(nr_images=-1):
     prediction_dict = {}
-    counter = 0
     offset = 1
     if nr_images == -1:
         offset = 0
@@ -87,13 +86,12 @@ def making_prediction(nr_images=-1):
         sorted_img_list.append(pair[1])
 
     for img in sorted_img_list:
+        image_key = img.split('.')[0]
         try:
             prediction, scores, bboxes = predictor.predict(f"{image_path}/{img}")
-            prediction_dict[f"{counter}"] = prediction
-            counter += 1
+            prediction_dict[image_key] = prediction
         except:
-            prediction_dict[f"{counter}"] = ["exception"]
-            counter += 1
+            prediction_dict[image_key] = ["exception"]
 
     return prediction_dict
 
