@@ -2,8 +2,6 @@ import tensorflow as tf
 import numpy as np
 import os
 
-from cookit.data import get_data
-from PIL import Image
 from cookit.utils import OIv4_FOOD_CLASSES
 
 # Make tensorflow less verbose
