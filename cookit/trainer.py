@@ -29,10 +29,12 @@ class Trainer(object):
 
     def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv'):
         print(f"Downloading images from {csv_path}")
-        data = object_detector.DataLoader.from_csv(csv_path)
+        cache_dir = csv_path.split('/')[-1].rstrip('.csv')
+        data = object_detector.DataLoader.from_csv(csv_path, cache_dir=cache_dir)
         self.train_data = data[0]
         self.val_data = data[1]
         self.test_data = data[2]
+        self.label_map = self.train_data.label_map
 
     def run(self, epochs=50, batch_size=32, train_whole_model=True):
         """fits model"""
@@ -41,7 +43,8 @@ class Trainer(object):
                                             model_spec=self._spec,
                                             batch_size=batch_size,
                                             train_whole_model=train_whole_model,
-                                            validation_data=self.val_data)
+                                            validation_data=self.val_data,
+                                            label_map=self.label_map)
 
     def evaluate(self):
         """evaluates the pipeline on df_test"""
@@ -49,13 +52,13 @@ class Trainer(object):
         print(eval_dict)
         return eval_dict
 
-    def save_model_locally(self, model_name='model.tflite'):
+    def save_model_locally(self, model_name='model.tflite', label_filename='labels.txt'):
         """Save the model into a .joblib format"""
         # see https://www.tensorflow.org/lite/tutorials/model_maker_object_detection#export_to_different_formats
         # model.export(export_dir='.', export_format=[ExportFormat.SAVED_MODEL, ExportFormat.LABEL])
         self.model.export(export_dir='.',
                           tflite_filename=model_name,
-                          label_filename='labels.txt',
+                          label_filename=label_filename,
                           #saved_model_filename=model_name,
                           #export_format=None,
                           )
