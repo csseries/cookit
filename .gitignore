@@ -3,9 +3,11 @@
 .ipynb_checkpoints
 .DS_Store
 raw_data/
+!raw_data/test_pic.jpg
 *.csv
+!metrics/food_testing_set.csv
+metrics/images_from_csv
 **/__pycache__/
 .env
 api/__pycache__
 JustinSms*
-brokkoli.jpg
