@@ -115,7 +115,7 @@ def calculating_score(nr_images=-1):
         ingredients = value[0]
         number_words = len(ingredients)
         total_amount_ingredients_counter += number_words
-        predictions = prediction_dict[key]
+        predictions = prediction_dict.get(key, [])
 
         for pred in predictions:
             # iterate through every prediction and check if it is in ingredients
