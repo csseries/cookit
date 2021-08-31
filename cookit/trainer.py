@@ -26,24 +26,32 @@ class Trainer(object):
         """
         self.model = None
         self._spec = model_spec.get(spec)
+        self._cache_prefix = 'cookit_trainer'
 
-    def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv'):
-        print(f"Downloading images from {csv_path}")
+    def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv',
+                  force_download=False):
         cache_dir = csv_path.split('/')[-1].rstrip('.csv')
-        data = object_detector.DataLoader.from_csv(csv_path,
-                                                   cache_dir=cache_dir,
-                                                   cache_prefix_filename='cookit_trainer')
-        self.train_data = data[0]
-        self.val_data = data[1]
-        self.test_data = data[2]
-        self.label_map = self.train_data.label_map
+        if not os.path.isdir(cache_dir) and force_download == False:
+            print(f"Downloading images from {csv_path}")
+
+            data = object_detector.DataLoader.from_csv(csv_path,
+                                                    cache_dir=cache_dir,
+                                                    cache_prefix_filename=self._cache_prefix)
+            self.train_data = data[0]
+            self.val_data = data[1]
+            self.test_data = data[2]
+            self.label_map = self.train_data.label_map
+        else:
+            self.load_data_from_cache(cache_dir)
 
     def load_data_from_cache(self, cache_dir):
         print(f"Load images from {cache_dir}")
-        data = object_detector.DataLoader.from_cache(cache_dir)
-        self.train_data = data[0]
-        self.val_data = data[1]
-        self.test_data = data[2]
+        cache_prefix = f"{cache_dir}/train_{self._cache_prefix}"
+        self.train_data = object_detector.DataLoader.from_cache(cache_prefix)
+        cache_prefix = f"{cache_dir}/test_{self._cache_prefix}"
+        self.test_data = object_detector.DataLoader.from_cache(cache_prefix)
+        cache_prefix = f"{cache_dir}/val_{self._cache_prefix}"
+        self.val_data = object_detector.DataLoader.from_cache(cache_prefix)
         self.label_map = self.train_data.label_map
 
     def run(self, epochs=50, batch_size=32, train_whole_model=True):
