@@ -31,7 +31,7 @@ class Trainer(object):
     def load_data(self, csv_path=f'gs://{BUCKET_NAME}/oi_food_converted_sample.csv',
                   force_download=False):
         cache_dir = csv_path.split('/')[-1].rstrip('.csv')
-        if not os.path.isdir(cache_dir) and force_download == False:
+        if not os.path.isdir(cache_dir) and force_download == True:
             print(f"Downloading images from {csv_path}")
 
             data = object_detector.DataLoader.from_csv(csv_path,
