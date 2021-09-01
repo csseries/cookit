@@ -10,4 +10,4 @@ metrics/images_from_csv
 **/__pycache__/
 .env
 api/__pycache__
-JustinSms*
+saved_model/

@@ -15,9 +15,16 @@ class Predictor():
         """
         self.model = self._get_model()
 
-    def _get_model(self, path_to_joblib='model.joblib'):
-        module_handle = "https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1"
-        return hub.load(module_handle).signatures['default']
+    def _get_model(self, model_path="saved_model/"):
+        # try to load the model from a local path or URL
+        try:
+            model = hub.load(model_path).signatures['default']
+            print(f"Loaded Model successfully from {model_path}")
+        except: # if fails, use default URL
+            module_handle = "https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1"
+            model = hub.load(module_handle).signatures['default']
+            print(f"Loaded Model from {module_handle}")
+        return model
 
     def load_img(self, path):
         img = tf.io.read_file(path)
