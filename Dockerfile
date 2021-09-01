@@ -4,6 +4,7 @@ COPY api /api
 COPY cookit /cookit
 COPY model.tflite /model.tflite
 COPY requirements.txt /requirements.txt
+COPY Makefile /Makefile
 
 RUN pip install --upgrade pip
 RUN pip install Cython

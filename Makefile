@@ -41,9 +41,9 @@ count_lines:
         '{printf "%4s %s\n", $$1, $$2}{s+=$$0}END{print s}'
 	@echo ''
 
-download_model:
 # Download and unpack pre-trained model
-	@mkdir saved_model/
+download_model:
+	@mkdir -p saved_model/
 	@wget https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1?tf-hub-format=compressed -O model
 	@tar xvzf model -C saved_model/
 	@rm model
