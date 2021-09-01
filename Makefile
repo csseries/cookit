@@ -14,6 +14,9 @@ test:
 	@coverage run -m pytest tests/*.py
 	@coverage report -m --omit="${VIRTUAL_ENV}/lib/python*"
 
+performance_test:
+	@python -m metrics.metric
+
 ftest:
 	@Write me
 
