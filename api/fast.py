@@ -33,7 +33,7 @@ def index():
 # response = requests.post('http://localhost:8000/predict', files=files, data=payload)
 # --> make sure to close the opened file again or del the files dictionary in this example case!
 @app.post("/predict")
-async def predict(image: UploadFile = File(...), threshold: float = Form(0.5)):
+async def predict(image: UploadFile = File(...), threshold: float = Form(0.1)):
     """ Executes prediction based on sent file and threshold
         image: a file in multipart/form-data format
         threshold: a float value (default: 0.25) to filter predicted classes
