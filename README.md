@@ -59,6 +59,7 @@ To test the performance of the model, run
 make performance_test
 ```
 which will download a number of images, apply the detector and calculate an accuracy value.
+Based on the used set of test images, an average accuracy of 0.31 is reached.
 
 # Acknowledgement
 This project was made within the scope of a [Le Wagon](https://www.lewagon.com/) Data Science bootcamp, batch #674 in Munich. 🚌
