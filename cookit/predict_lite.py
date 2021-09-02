@@ -1,7 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import os
-
+import pickle
+from PIL import Image
 from cookit.utils import OIv4_FOOD_CLASSES
 
 # Make tensorflow less verbose
@@ -13,25 +14,12 @@ class Predictor():
         """
         A basic call for predictions.
         """
-        self.model = self._get_model('model_min_8k_balanced.tflite')
+        self.model = self._get_model('oi_food_balanced_400_lite4_ll.tflite')
 
-        # NOTE: The order of this list hardcoded here, and needs to be changed when re-training the model!
-        # When exporting the model in tflite format, the model_spec is lost, so we cannot do it like that:
-        # classes = ['???'] * model.model_spec.config.num_classes
-        # label_map = model.model_spec.config.label_map
-        # for label_id, label_name in label_map.as_dict().items():
-        #   classes[label_id-1] = label_name
+        with open('class_labels.pkl', 'rb') as f:
+            self.classes_map = pickle.load(f)
         #self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
-        self.classes_map = {
-            1: 'label', 2: 'Pumpkin', 3: 'Ice cream', 4: 'Salad', 5: 'Bread',
-            6: 'Coconut', 7: 'Grape', 8: 'Mushroom', 9: 'Honeycomb', 10: 'Fish',
-            11: 'Oyster', 12: 'Pomegranate', 13: 'Radish', 14: 'Watermelon',
-            15: 'Pasta', 16: 'Cabbage', 17: 'Strawberry', 18: 'Apple', 19: 'Orange',
-            20: 'Potato', 21: 'Banana', 22: 'Pear', 23: 'Shellfish', 24: 'Tomato',
-            25: 'Cheese', 26: 'Carrot', 27: 'Shrimp', 28: 'Lemon', 29: 'Artichoke',
-            30: 'Broccoli', 31: 'Bell pepper', 32: 'Pineapple', 33: 'Lobster',
-            34: 'Milk', 35: 'Mango', 36: 'Grapefruit', 37: 'Cantaloupe',
-            38: 'Peach', 39: 'Cream', 40: 'Zucchini', 41: 'Cucumber', 42: 'Winter melon'}
+
 
     def _get_model(self, model_path='model.tflite'):
         """ Load the model from a local path """
