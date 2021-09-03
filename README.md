@@ -1,74 +1,72 @@
-# Data analysis
-- Document here the project: cookit
-- Description: Project Description
-- Data Source:
-- Type of analysis:
+![Deploying](https://img.shields.io/github/workflow/status/csseries/cookit/Deploy%20to%20Cloud%20Run/master)
 
-Please document the project the better you can.
 
-# Startup the project
+# cookit
 
-The initial setup.
+cookit is a deep learning model for object-detection of food ingredients on images.
+It's running on a webserver, deployed in a Docker container. The model used for predictions is [FasterRCNN+InceptionResNetV2](https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1), trained on [OpenImages v4](https://storage.googleapis.com/openimages/web/index.html)
 
-Create virtualenv and install the project:
+The [frontend repository](https://github.com/csseries/cookit_frontend) is [running here](https://cookit-frontend.herokuapp.com/). A user may upload there an image of certain food ingredients and the deep learning model will detect a list of ingredients which are on the image. The user can than edit and extend ingredients to find recipes which make the most of available ingredients at home.
+
+# Installation
+
+Get the project
+```bash
+# Either
+git clone git@github.com:csseries/cookit.git
+
+# Or
+git clone https://github.com/csseries/cookit.git
+```
+
+Create virtualenv:
 ```bash
 sudo apt-get install virtualenv python-pip python-dev
 deactivate; virtualenv ~/venv ; source ~/venv/bin/activate ;\
     pip install pip -U; pip install -r requirements.txt
 ```
 
-Unittest test:
+Install requirements:
 ```bash
-make clean install test
+pip install -r requirements
 ```
 
-Check for cookit in gitlab.com/{group}.
-If your project is not set please add it:
-
-- Create a new project on `gitlab.com/{group}/cookit`
-- Then populate it:
-
+NOTE: At the time of writing, Mac users with a M1 chip had to apply this command in addition:
 ```bash
-##   e.g. if group is "{group}" and project_name is "cookit"
-git remote add origin git@github.com:{group}/cookit.git
-git push -u origin master
-git push -u origin --tags
+pip uninstall tensorflow
+pip install tensorflow-macos tensorflow-metal
 ```
 
-Functionnal test with a script:
 
+# Run the backend
+
+Download model (optional):
 ```bash
-cd
-mkdir tmp
-cd tmp
-cookit-run
+make download_model
 ```
 
-# Install
 
-Go to `https://github.com/{group}/cookit` to see the project, manage issues,
-setup you ssh public key, ...
-
-Create a python3 virtualenv and activate it:
-
+Run the backend
 ```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
+# Will run backend locally on http://localhost:8080/predict
+make run_locally
 ```
 
-Clone the project and install it:
+# Performance
 
+To test the performance of the model, run
 ```bash
-git clone git@github.com:{group}/cookit.git
-cd cookit
-pip install -r requirements.txt
-make clean install test                # install and test
+make performance_test
 ```
-Functionnal test with a script:
+which will download a number of images, apply the detector and calculate an accuracy value.
+Based on the used set of test images, an average accuracy of 0.31 is reached.
 
-```bash
-cd
-mkdir tmp
-cd tmp
-cookit-run
-```
+# Acknowledgement
+This project was made within the scope of a [Le Wagon](https://www.lewagon.com/) Data Science bootcamp, batch #674 in Munich. 🚌
+
+## Made with  ❤️  by
+- [Claire-Sophie Sériès](https://github.com/csseries)
+- [Justin Bruce Sams](https://github.com/JustinSms)
+- [Lilly Kämmerling](https://github.com/lillykml)
+- [Judith Reker](https://github.com/judd-r)
+- [Michael Weitnauer](https://github.com/kickermeister)
