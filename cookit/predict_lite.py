@@ -1,8 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
-
-from cookit.data import get_data
+import pickle
 from PIL import Image
 from cookit.utils import OIv4_FOOD_CLASSES
 
@@ -15,15 +14,12 @@ class Predictor():
         """
         A basic call for predictions.
         """
-        self.model = self._get_model()
+        self.model = self._get_model('oi_food_balanced_400_lite4_ll.tflite')
 
-        # NOTE: The order of this list hardcoded here, and needs to be changed when re-training the model!
-        # When exporting the model in tflite format, the model_spec is lost, so we cannot do it like that:
-        # classes = ['???'] * model.model_spec.config.num_classes
-        # label_map = model.model_spec.config.label_map
-        # for label_id, label_name in label_map.as_dict().items():
-        #   classes[label_id-1] = label_name
-        self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
+        with open('class_labels.pkl', 'rb') as f:
+            self.classes_map = pickle.load(f)
+        #self.classes = ['Baked Goods', 'Salad', 'Cheese', 'Seafood', 'Tomato']
+
 
     def _get_model(self, model_path='model.tflite'):
         """ Load the model from a local path """
@@ -59,10 +55,10 @@ class Predictor():
         self.model.invoke()
 
         # Get all outputs from the model
-        boxes = self.get_output_tensor(0)
-        classes = self.get_output_tensor(1)
-        scores = self.get_output_tensor(2)
-        count = int(self.get_output_tensor(3))
+        boxes = self.get_output_tensor(1)
+        classes = self.get_output_tensor(3)
+        scores = self.get_output_tensor(0)
+        count = int(self.get_output_tensor(2))
 
         results = []
         for i in range(count):
@@ -86,7 +82,7 @@ class Predictor():
         results = self.detect_objects(preprocessed_image)
         return results
 
-    def predict(self, image_path, threshold=0.5):
+    def predict(self, image_path, threshold=0.1):
         detection_result_image = self.run_detection(image_path, threshold)
         print(f"Received file for prediction: {image_path}")
 
@@ -96,7 +92,7 @@ class Predictor():
 
         for result in detection_result_image:
             if result['score'] > threshold:
-                res_class = self.classes[result['class_id']]
+                res_class = self.classes_map[result['class_id']]
                 # do not return redundant ingredients
                 if res_class not in ingredients:
                     ingredients.append(res_class)

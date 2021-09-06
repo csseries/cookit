@@ -2,7 +2,6 @@ import os
 import tensorflow as tf
 import tensorflow_hub as hub
 from PIL import Image, ImageOps
-from cookit.data import get_data
 from cookit.utils import OIv4_FOOD_CLASSES
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

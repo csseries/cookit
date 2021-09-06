@@ -72,3 +72,31 @@ pypi:
 
 run_locally:
 	@uvicorn api.fast:app --reload --host 0.0.0.0
+
+# ----------------------------------
+#      GCLOUD TRAINING
+# ----------------------------------
+
+
+BUCKET_NAME=taxifare_bucket_fast-drake-318911
+BUCKET_TRAINING_FOLDER = 'trainings'
+REGION=europe-west1
+PYTHON_VERSION=3.7
+RUNTIME_VERSION=1.15
+
+PACKAGE_NAME=cookit
+FILENAME=trainer
+
+JOB_NAME=cookit_training_$(shell date +'%Y%m%d_%H%M%S')
+
+
+
+gcp_submit_training:
+	gcloud ai-platform jobs submit training ${JOB_NAME} \
+		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
+		--package-path ${PACKAGE_NAME} \
+		--module-name ${PACKAGE_NAME}.${FILENAME} \
+		--python-version=${PYTHON_VERSION} \
+		--runtime-version=${RUNTIME_VERSION} \
+		--region ${REGION} \
+		--stream-logs
